@@ -191,15 +191,17 @@ static int fifo_close(struct inode* inode,struct file* file)
 //***********************
 static ssize_t fifo_write(struct file *p_file, const char *p_buf,size_t count, loff_t *p_pos)
 {                         
-    char* pReg [100];;
+    char pReg [100];;
     char* ptr=NULL;
+	 char* nl = NULL;
     char* zarez=NULL;
     int len=0,i=0;
     int num_read=0;
 
+	 /*
 	 for (i=0; i<100; i++)
 		 pReg[i]=0;
-    
+   */ 
 	 copy_from_user(pReg, p_buf, count);
     if(!strncmp(pReg,"W",1))
     {	
@@ -236,8 +238,9 @@ static ssize_t fifo_write(struct file *p_file, const char *p_buf,size_t count, l
     	len=strlen(ptr);
     	if(strchr(ptr, '\n') != NULL)
 	  	{ 
-	  		ptr[len]='\0';
-		 		len--;
+			nl = strchr(ptr,'\n');
+			*nl = '\0';
+		 	len=strlen(ptr);
 	  	}
     	
     	num_read=strToInt(ptr, len, 10);
